@@ -1,4 +1,4 @@
-/*
+/* 
  * QR Code generator library (TypeScript)
  *
  * Copyright (c) Project Nayuki. (MIT License)
@@ -47,15 +47,15 @@ var qrcodegen;
         // This is a low-level API that most users should not use directly.
         // A mid-level API is the encodeSegments() function.
         function QrCode(
-        // The version number of this QR Code, which is between 1 and 40 (inclusive).
-        // This determines the size of this barcode.
-        version, 
-        // The error correction level used in this QR Code.
-        errorCorrectionLevel, dataCodewords, 
-        // The index of the mask pattern used in this QR Code, which is between 0 and 7 (inclusive).
-        // Even if a QR Code is created with automatic masking requested (mask = -1),
-        // the resulting object still has a mask value between 0 and 7.
-        mask) {
+            // The version number of this QR Code, which is between 1 and 40 (inclusive).
+            // This determines the size of this barcode.
+            version,
+            // The error correction level used in this QR Code.
+            errorCorrectionLevel, dataCodewords,
+            // The index of the mask pattern used in this QR Code, which is between 0 and 7 (inclusive).
+            // Even if a QR Code is created with automatic masking requested (mask = -1),
+            // the resulting object still has a mask value between 0 and 7.
+            mask) {
             this.version = version;
             this.errorCorrectionLevel = errorCorrectionLevel;
             this.mask = mask;
@@ -142,7 +142,7 @@ var qrcodegen;
             // Find the minimal version number to use
             var version;
             var dataUsedBits;
-            for (version = minVersion;; version++) {
+            for (version = minVersion; ; version++) {
                 var dataCapacityBits_1 = QrCode.getNumDataCodewords(version, ecl) * 8; // Number of data bits available
                 var usedBits = QrSegment.getTotalBits(segs, version);
                 if (usedBits <= dataCapacityBits_1) {
@@ -205,6 +205,9 @@ var qrcodegen;
         // The drawn image is be purely black and white, and fully opaque.
         // The scale must be a positive integer and the border must be a non-negative integer.
         QrCode.prototype.drawCanvas = function (scale, border, canvas) {
+            //my modified 
+            $("#data_from_generate").empty();
+
             if (scale <= 0 || border < 0)
                 throw "Value out of range";
             var width = (this.size + border * 2) * scale;
@@ -215,6 +218,11 @@ var qrcodegen;
                 for (var x = -border; x < this.size + border; x++) {
                     ctx.fillStyle = this.getModule(x, y) ? "#000000" : "#FFFFFF";
                     ctx.fillRect((x + border) * scale, (y + border) * scale, scale, scale);
+                    //my modified
+                    if (this.getModule(x, y))
+                        $("#data_from_generate").append("1");//my modified
+                    else
+                        $("#data_from_generate").append("0");//my modified
                 }
             }
         };
@@ -555,7 +563,7 @@ var qrcodegen;
         QrCode.getNumDataCodewords = function (ver, ecl) {
             return Math.floor(QrCode.getNumRawDataModules(ver) / 8) -
                 QrCode.ECC_CODEWORDS_PER_BLOCK[ecl.ordinal][ver] *
-                    QrCode.NUM_ERROR_CORRECTION_BLOCKS[ecl.ordinal][ver];
+                QrCode.NUM_ERROR_CORRECTION_BLOCKS[ecl.ordinal][ver];
         };
         // Returns a Reed-Solomon ECC generator polynomial for the given degree. This could be
         // implemented as a lookup table over all possible parameter values, instead of as an algorithm.
@@ -700,14 +708,14 @@ var qrcodegen;
         // The character count (numChars) must agree with the mode and the bit buffer length,
         // but the constraint isn't checked. The given bit buffer is cloned and stored.
         function QrSegment(
-        // The mode indicator of this segment.
-        mode, 
-        // The length of this segment's unencoded data. Measured in characters for
-        // numeric/alphanumeric/kanji mode, bytes for byte mode, and 0 for ECI mode.
-        // Always zero or positive. Not the same as the data's bit length.
-        numChars, 
-        // The data bits of this segment. Accessed through getData().
-        bitData) {
+            // The mode indicator of this segment.
+            mode,
+            // The length of this segment's unencoded data. Measured in characters for
+            // numeric/alphanumeric/kanji mode, bytes for byte mode, and 0 for ECI mode.
+            // Always zero or positive. Not the same as the data's bit length.
+            numChars,
+            // The data bits of this segment. Accessed through getData().
+            bitData) {
             this.mode = mode;
             this.numChars = numChars;
             this.bitData = bitData;
@@ -848,10 +856,10 @@ var qrcodegen;
         var Ecc = /** @class */ (function () {
             /*-- Constructor and fields --*/
             function Ecc(
-            // In the range 0 to 3 (unsigned 2-bit integer).
-            ordinal, 
-            // (Package-private) In the range 0 to 3 (unsigned 2-bit integer).
-            formatBits) {
+                // In the range 0 to 3 (unsigned 2-bit integer).
+                ordinal,
+                // (Package-private) In the range 0 to 3 (unsigned 2-bit integer).
+                formatBits) {
                 this.ordinal = ordinal;
                 this.formatBits = formatBits;
             }
@@ -875,10 +883,10 @@ var qrcodegen;
         var Mode = /** @class */ (function () {
             /*-- Constructor and fields --*/
             function Mode(
-            // The mode indicator bits, which is a uint4 value (range 0 to 15).
-            modeBits, 
-            // Number of character count bits for three different version ranges.
-            numBitsCharCount) {
+                // The mode indicator bits, which is a uint4 value (range 0 to 15).
+                modeBits,
+                // Number of character count bits for three different version ranges.
+                numBitsCharCount) {
                 this.modeBits = modeBits;
                 this.numBitsCharCount = numBitsCharCount;
             }

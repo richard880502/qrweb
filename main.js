@@ -20,8 +20,6 @@ $(document).ready(function () {
   // Create a storage reference from our storage service
   var storageRef = storage.ref();
 
-  var download_data;  
-
   function listname() {
 
     //clear the page
@@ -73,7 +71,6 @@ $(document).ready(function () {
       var data = snapshot.val();
       console.log(data);
       $("#data").append(data);
-      download_data = data;
     });
 
     // Get bit picture
@@ -84,7 +81,7 @@ $(document).ready(function () {
       // Or inserted into an <img> element:
       $("#pic").attr("src", url);
       var img = document.getElementById('pic');
-      img.style.left = "-300px";     
+      img.style.left = "-300px";
     }).catch(function (error) {
       // Handle any errors
       switch (error.code) {
@@ -96,9 +93,9 @@ $(document).ready(function () {
     });
   }
 
-  function downloaddata() {
+  function downloaddata(id) {
 
-    var content = download_data;
+    var content = $(id).text();
     // any kind of extension (.txt,.cpp,.cs,.bat)
     var filename = "download.txt";
 
@@ -166,33 +163,36 @@ $(document).ready(function () {
     codeWriter.writeToDom('#qrcode', input, 300, 300);
   }
 
-  function svgTopng(link){
+  function svgTopng(link) {
     var svg = link;
-    var svgData = new XMLSerializer().serializeToString( svg );
+    var svgData = new XMLSerializer().serializeToString(svg);
 
-    var canvas = document.createElement( "canvas" );
-    var ctx = canvas.getContext( "2d" );
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext("2d");
 
-    var img = document.createElement( "img" );
-    img.setAttribute( "src", "data:image/svg+xml;base64," + btoa( svgData ) );
+    var img = document.createElement("img");
+    img.setAttribute("src", "data:image/svg+xml;base64," + btoa(svgData));
 
-    img.onload = function() {
-      ctx.drawImage( img, 0, 0 );
-      
+    img.onload = function () {
+      ctx.drawImage(img, 0, 0);
+
       // Now is done
-      console.log( canvas.toDataURL( "image/png" ) );
-  };
-    return canvas.toDataURL( "image/png" );
+      console.log(canvas.toDataURL("image/png"));
+    };
+    return canvas.toDataURL("image/png");
   }
-  
+
   $("#getbit").click(function () {
     getdata();
   });
   $("#download_bit").click(function () {
-    downloaddata();
+    downloaddata("#data");
   });
   $("#download_pic").click(function () {
     downloadphoto();
+  });
+  $("#bit_from_generator").click(function () {
+    downloaddata("#data_from_generate");
   });
   $("#getQR").click(function () {
     var svg = document.querySelector("#qrcode-svg");
