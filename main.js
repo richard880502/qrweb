@@ -59,11 +59,11 @@ $(document).ready(function () {
     var username = document.getElementById("username").value;
 
     // Get date
-    var timeRef = firebase.database().ref(username + "/date");
+    /*var timeRef = firebase.database().ref(username + "/date");
     timeRef.once("value", function (snapshot) {
       var date = snapshot.val();
       $("#data").append("Date: " + date + "\n");
-    });
+    });*/
 
     // Get bit data  
     var docRef = firebase.database().ref(username + "/decode");
