@@ -182,6 +182,24 @@ $(document).ready(function () {
     return canvas.toDataURL("image/png");
   }
 
+  function compare() {
+    var formfirebase = document.getElementById("data").innerHTML;
+    var formgenerator = document.getElementById("data_from_generate").innerHTML;
+
+    //var len = formfirebase.length - formfirebase.count(' ');
+    var count = 0;
+    for (var i = 0; i < formfirebase.length; i++)
+      if (formfirebase[i] == formgenerator[i])
+        count++
+
+    console.log(formfirebase.length);
+    console.log(formgenerator.length);
+    console.log(count);
+    console.log();
+
+    $("#compare_result").append(count / formfirebase.length);
+  }
+
   $("#getbit").click(function () {
     getdata();
   });
@@ -189,7 +207,9 @@ $(document).ready(function () {
     downloaddata("#data");
   });
   $("#download_pic").click(function () {
-    downloadphoto();
+    $("#compare_result").empty();
+    compare()
+    //downloadphoto();
   });
   $("#bit_from_generator").click(function () {
     downloaddata("#data_from_generate");
