@@ -204,7 +204,7 @@ var qrcodegen;
         // canvas element. The canvas's width and height is resized to (this.size + border * 2) * scale.
         // The drawn image is be purely black and white, and fully opaque.
         // The scale must be a positive integer and the border must be a non-negative integer.
-        QrCode.prototype.drawCanvas = function (scale, border, canvas) {                        
+        QrCode.prototype.drawCanvas = function (scale, border, canvas) {
             if (scale <= 0 || border < 0)
                 throw "Value out of range";
             var width = (this.size + border * 2) * scale;
@@ -214,14 +214,19 @@ var qrcodegen;
             for (var y = -border; y < this.size + border; y++) {
                 for (var x = -border; x < this.size + border; x++) {
                     ctx.fillStyle = this.getModule(x, y) ? "#000000" : "#FFFFFF";
-                    ctx.fillRect((x + border) * scale, (y + border) * scale, scale, scale);                    
+                    ctx.fillRect((x + border) * scale, (y + border) * scale, scale, scale);
+
+
+                    if (this.getModule(x, y)) {
+                        ctx.clearRect((x + border) * scale + 2, (y + border) * scale + 2, scale - 4, scale - 4)
+                    }
                 }
             }
-                        
+
             //my modified 
             $("#data_from_generate").empty();
-            for (var y = 0; y < this.size; y++) 
-                for (var x =0; x < this.size; x++) {
+            for (var y = 0; y < this.size; y++)
+                for (var x = 0; x < this.size; x++) {
                     if (this.getModule(x, y))
                         $("#data_from_generate").append("1");//my modified
                     else
