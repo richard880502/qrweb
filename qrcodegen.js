@@ -204,7 +204,7 @@ var qrcodegen;
         // canvas element. The canvas's width and height is resized to (this.size + border * 2) * scale.
         // The drawn image is be purely black and white, and fully opaque.
         // The scale must be a positive integer and the border must be a non-negative integer.
-        QrCode.prototype.drawCanvas = function (scale, border, canvas) {
+        QrCode.prototype.drawCanvas = function (scale, border, canvas, mode) {
             if (scale <= 0 || border < 0)
                 throw "Value out of range";
             var width = (this.size + border * 2) * scale;
@@ -215,10 +215,19 @@ var qrcodegen;
                 for (var x = -border; x < this.size + border; x++) {
                     ctx.fillStyle = this.getModule(x, y) ? "#000000" : "#FFFFFF";
                     ctx.fillRect((x + border) * scale, (y + border) * scale, scale, scale);
-
-
+                    //my modified 
                     if (this.getModule(x, y)) {
-                        ctx.clearRect((x + border) * scale + 2, (y + border) * scale + 2, scale - 4, scale - 4)
+                        if (!this.notdraw(x, y, this.version)) {
+                            if (mode == 0)
+                                ctx.clearRect((x + border) * scale + 2, (y + border) * scale + 2, 2, 2);
+                            if (mode == 1)
+                                ctx.clearRect((x + border) * scale + 4, (y + border) * scale + 2, 2, 2);
+                            if (mode == 2)
+                                ctx.clearRect((x + border) * scale + 2, (y + border) * scale + 4, 2, 2);
+                            if (mode == 3)
+                                ctx.clearRect((x + border) * scale + 4, (y + border) * scale + 4, 2, 2);
+                            //ctx.clearRect((x + border) * scale + 2, (y + border) * scale + 2, scale - 4, scale - 4);
+                        }
                     }
                 }
             }
@@ -233,6 +242,97 @@ var qrcodegen;
                         $("#data_from_generate").append("0");//my modified
                 }
         };
+
+        //my modified 
+        //to determine which part should be drawn
+        QrCode.prototype.notdraw = function (x, y, version) {
+            /*var addbit = (version - 1) * 4;
+            if (x < 8 && y < 8)
+                return true;
+            if (x >= 14 + addbit && y < 8)
+                return true;
+            if (x < 8 && y >= 14 + addbit)
+                return true;
+*/
+            //isTimingP
+            var modulesPerRow = 17 + version * 4;
+
+            if ((y == 6 && ((x >= 8) && (x <= modulesPerRow - 9)))) return true;
+            if ((x == 6 && ((y >= 8) && (y <= modulesPerRow - 9)))) return true;
+
+            //isFinderP
+            if ((y < 7) && (x < 7)) return true;      //left top pattern
+            if ((y >= modulesPerRow - 7) && (x < 7)) return true; // left bottom
+            if ((y < 7) && (x >= modulesPerRow - 7)) return true; //right top
+
+
+            //isFormat
+            if ((y == 8 && (x < 9 || x > modulesPerRow - 9))) return true;
+            if ((x == 8 && (y < 9 || y > modulesPerRow - 8))) return true;
+
+            //isVersion
+            if (version < 7) return false; // only for version >=7
+            if (((y == modulesPerRow - 9) || (y == modulesPerRow - 10) || (y == modulesPerRow - 11)) && (x < 6))
+                return true;
+            if (((x == modulesPerRow - 9) || (x == modulesPerRow - 10) || (x == modulesPerRow - 11)) && (y < 6))
+                return true;
+
+            //isDarkmodule
+            if ((y == modulesPerRow - 8) && (x == 8)) return true;
+
+            //isSeparator
+            //horizontal
+            if ((y == 7) && ((x < 8) || (x > modulesPerRow - 9))) return true;
+            if ((y == modulesPerRow - 8) && (x < 8)) return true;
+
+            //vertical
+            if ((x == 7) && ((y < 8) || (y > modulesPerRow - 9))) return true;
+            if ((x == modulesPerRow - 8) && (y < 8)) return true;
+
+            //isAlignP
+            if ((x <= 8 && y <= 8) || (x <= 8 && y >= modulesPerRow - 9) || (x >= modulesPerRow - 9 && y <= 8)) {
+                return false;
+            }
+            var ap = this.getAPPositions(version);
+            for (var i = 0; i < ap.length; ++i) {
+                if (Math.abs(y - ap[i]) <= 2) {
+                    for (var j = 0; j < ap.length; ++j) {
+                        if (Math.abs(x - ap[j]) <= 2) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        QrCode.prototype.getAPPositions = function (version) {
+            if (version == 1) {
+                var temp = new Array()
+                return temp;
+            } else {
+                var numAlign = version / 7 + 2;
+                var step = 0;
+                if (version != 32) {
+                    // ceil((size - 13) / (2*numAlign - 2)) * 2
+                    step = (version * 4 + numAlign * 2 + 1) / (2 * numAlign - 2) * 2;
+                } else {
+                    step = 26;
+                }
+
+                var result = new Array();
+                for (var i = 0, pos = version * 4 + 10; i < numAlign - 1; i++, pos -= step)
+                    result.push(pos);
+                result.push(6);
+                console.log(result);
+                result.reverse();
+                console.log(result);
+                console.log(version);
+                return result;
+            }
+        }
+
         // Returns a string of SVG code for an image depicting this QR Code, with the given number
         // of border modules. The string always uses Unix newlines (\n), regardless of the platform.
         QrCode.prototype.toSvgString = function (border) {

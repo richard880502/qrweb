@@ -56,9 +56,23 @@ var app;
         svgXml.value = "";
         // Reset output images in case of early termination
         var canvas = getElem("qrcode-canvas");
+        //----------------------------------------------------------------------------------------------------------------------------------
+        var canvasA = getElem("qrcode-canvas1");
+        var canvasB = getElem("qrcode-canvas2");
+        var canvasC = getElem("qrcode-canvas3");
+        //----------------------------------------------------------------------------------------------------------------------------------
         var svg = document.getElementById("qrcode-svg");
+        var svgA = document.getElementById("qrcode-svg1");
+        var svgB = document.getElementById("qrcode-svg2");
+        var svgC = document.getElementById("qrcode-svg3");
         canvas.style.display = "none";
+        canvasA.style.display = "none";
+        canvasB.style.display = "none";
+        canvasC.style.display = "none";
         svg.style.display = "none";
+        svgA.style.display = "none";
+        svgB.style.display = "none";
+        svgC.style.display = "none";
         // Returns a QrCode.Ecc object based on the radio buttons in the HTML form.
         function getInputErrorCorrectionLevel() {
             if (getInput("errcorlvl-medium").checked)
@@ -87,8 +101,14 @@ var app;
             var scale = parseInt(getInput("scale-input").value, 10);
             if (scale <= 0 || scale > 30)
                 return;
-            qr.drawCanvas(scale, border, canvas);
+            qr.drawCanvas(scale, border, canvas, 0);
+            qr.drawCanvas(scale, border, canvasA, 1);
+            qr.drawCanvas(scale, border, canvasB, 2);
+            qr.drawCanvas(scale, border, canvasC, 3);
             canvas.style.removeProperty("display");
+            canvasA.style.removeProperty("display")
+            canvasB.style.removeProperty("display")
+            canvasC.style.removeProperty("display")
         }
         else {
             var code = qr.toSvgString(border);
