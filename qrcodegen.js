@@ -219,13 +219,13 @@ var qrcodegen;
                     if (this.getModule(x, y)) {
                         if (!this.notdraw(x, y, this.version)) {
                             if (mode == 0)
-                                ctx.clearRect((x + border) * scale, (y + border) * scale, 4, 4);
+                                ctx.clearRect((x + border) * scale, (y + border) * scale, 2, scale);
                             if (mode == 1)
-                                ctx.clearRect((x + border) * scale + 4, (y + border) * scale, 4, 4);
+                                ctx.clearRect((x + border) * scale + scale - 2, (y + border) * scale, 2, scale);
                             if (mode == 2)
-                                ctx.clearRect((x + border) * scale, (y + border) * scale + 4, 4, 4);
+                                ctx.clearRect((x + border) * scale, (y + border) * scale + scale - 2, scale, 2);
                             if (mode == 3)
-                                ctx.clearRect((x + border) * scale + 4, (y + border) * scale + 4, 4, 4);
+                                ctx.clearRect((x + border) * scale, (y + border) * scale, scale, 2);
                             //ctx.clearRect((x + border) * scale + 2, (y + border) * scale + 2, scale - 4, scale - 4);
                         }
                     }
