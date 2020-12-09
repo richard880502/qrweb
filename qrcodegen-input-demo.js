@@ -93,7 +93,7 @@ var app;
         var mask = parseInt(getInput("mask-input").value, 10);
         var boostEcc = getInput("boost-ecc-input").checked;
         var qr = qrcodegen.QrCode.encodeSegments(segs, ecl, minVer, maxVer, mask, boostEcc);
-        // Draw image output
+        // Draw   output
         var border = parseInt(getInput("border-input").value, 10);
         if (border < 0 || border > 100)
             return;
