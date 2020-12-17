@@ -111,6 +111,7 @@ var qrcodegen;
         // ecl argument if it can be done without increasing the version.
         QrCode.encodeText = function (text, ecl) {
             var segs = qrcodegen.QrSegment.makeSegments(text);
+
             return QrCode.encodeSegments(segs, ecl);
         };
         // Returns a QR Code representing the given binary data at the given error correction level.
@@ -218,19 +219,27 @@ var qrcodegen;
                     //my modified 
                     if (this.getModule(x, y)) {
                         if (!this.notdraw(x, y, this.version)) {
+                            ctx.fillStyle = "#FF0000";
                             if (!this.getModule(x - 1, y))
-                                if (mode == 0)
+                                if (mode == 0) {
                                     ctx.clearRect((x + border) * scale, (y + border) * scale, 2, scale);
+                                    ctx.fillRect((x + border) * scale, (y + border) * scale, 2, scale);
+                                }
                             if (!this.getModule(x + 1, y))
-                                if (mode == 1)
+                                if (mode == 1) {
                                     ctx.clearRect((x + border) * scale + scale - 2, (y + border) * scale, 2, scale);
+                                    ctx.fillRect((x + border) * scale + scale - 2, (y + border) * scale, 2, scale);
+                                }
                             if (!this.getModule(x, y + 1))
-                                if (mode == 2)
+                                if (mode == 2) {
                                     ctx.clearRect((x + border) * scale, (y + border) * scale + scale - 2, scale, 2);
+                                    ctx.fillRect((x + border) * scale, (y + border) * scale + scale - 2, scale, 2);
+                                }
                             if (!this.getModule(x, y - 1))
-                                if (mode == 3)
+                                if (mode == 3) {
                                     ctx.clearRect((x + border) * scale, (y + border) * scale, scale, 2);
-                            //ctx.clearRect((x + border) * scale + 2, (y + border) * scale + 2, scale - 4, scale - 4);
+                                    ctx.fillRect((x + border) * scale, (y + border) * scale, scale, 2);
+                                }
                         }
                     }
                 }
