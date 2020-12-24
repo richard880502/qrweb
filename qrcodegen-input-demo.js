@@ -55,24 +55,35 @@ var app;
         var svgXml = getElem("svg-xml-output");
         svgXml.value = "";
         // Reset output images in case of early termination
-        var canvas = getElem("qrcode-canvas");
+        //Get number of QR Code
+        var num = parseInt(getInput("qrcode-number").value, 10);
+        //var canvas = getElem("qrcode-canvas");
+        var canvas = new Array(num);
+        var svg = new Array(num);
+
+        console.log(num);
         //----------------------------------------------------------------------------------------------------------------------------------
-        var canvasA = getElem("qrcode-canvas1");
-        var canvasB = getElem("qrcode-canvas2");
-        var canvasC = getElem("qrcode-canvas3");
+        var loadsuccessful = new Promise((resolve, reject) => {
+            $("#QRimg").empty();
+            for (var i = 0; i < num; i++) {
+                //console.log(num);
+                //console.log(i);
+                $("#QRimg").append("<canvas id=\"qrcode-canvas" + i + "\"   style=\"padding:0.5em; background-color:#E8E8E8; display:none;\"></canvas>")
+                $("#QRimg").append("<svg id=\"qrcode-svg" + i + "\" style=\"width:30em; height:30em; padding:1em; background-color:#E8E8E8;\"><rect width=\"100%\" height=\"100%\" fill=\"#FFFFFF\" stroke-width=\"0\"></rect><path d=\"\" fill=\"#000000\" stroke-width=\"0\"></path></svg>")
+            }
+            setTimeout(function () {
+                resolve('finish');
+            }, 1000);
+        })
+
+        loadsuccessful.then(function (value) {
+        });
+
         //----------------------------------------------------------------------------------------------------------------------------------
-        var svg = document.getElementById("qrcode-svg");
-        var svgA = document.getElementById("qrcode-svg1");
-        var svgB = document.getElementById("qrcode-svg2");
-        var svgC = document.getElementById("qrcode-svg3");
-        canvas.style.display = "none";
-        canvasA.style.display = "none";
-        canvasB.style.display = "none";
-        canvasC.style.display = "none";
-        svg.style.display = "none";
-        svgA.style.display = "none";
-        svgB.style.display = "none";
-        svgC.style.display = "none";
+        /*var svg = document.getElementById("qrcode-svg");       
+        canvas.style.display = "none";       
+        svg.style.display = "none"; */
+
         // Returns a QrCode.Ecc object based on the radio buttons in the HTML form.
         function getInputErrorCorrectionLevel() {
             if (getInput("errcorlvl-medium").checked)
@@ -101,22 +112,22 @@ var app;
             var scale = parseInt(getInput("scale-input").value, 10);
             if (scale <= 0 || scale > 30)
                 return;
-            qr.drawCanvas(scale, border, canvas, 0);
-            qr.drawCanvas(scale, border, canvasA, 1);
-            qr.drawCanvas(scale, border, canvasB, 2);
-            qr.drawCanvas(scale, border, canvasC, 3);
-            canvas.style.removeProperty("display");
-            canvasA.style.removeProperty("display")
-            canvasB.style.removeProperty("display")
-            canvasC.style.removeProperty("display")
+            for (var i = 0; i < num; i++) {
+                var canvasA = getElem("qrcode-canvas" + i);
+                canvasA.style.display = "none";
+                var svgA = document.getElementById("qrcode-svg" + i);
+                svgA.style.display = "none";
+                qr.drawCanvas(scale, border, canvasA, 0);
+                canvasA.style.removeProperty("display");
+            }
         }
         else {
             var code = qr.toSvgString(border);
             var viewBox = / viewBox="([^"]*)"/.exec(code)[1];
             var pathD = / d="([^"]*)"/.exec(code)[1];
-            svg.setAttribute("viewBox", viewBox);
-            svg.querySelector("path").setAttribute("d", pathD);
-            svg.style.removeProperty("display");
+            svg[0].setAttribute("viewBox", viewBox);
+            svg[0].querySelector("path").setAttribute("d", pathD);
+            svg[0].style.removeProperty("display");
             svgXml.value = qr.toSvgString(border);
         }
         // Returns a string to describe the given list of segments.
